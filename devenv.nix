@@ -2,10 +2,10 @@
 
 {
   # https://devenv.sh/basics/
-  env.GREET = "devenv";
+  env.ANTHROPIC_API_KEY = config.secretspec.secrets.ANTHROPIC_API_KEY or "";
 
   # https://devenv.sh/packages/
-  packages = [];
+  packages = [ pkgs.secretspec ];
 
   # https://devenv.sh/languages/
   # languages.rust.enable = true;
@@ -18,8 +18,7 @@
   # services.postgres.enable = true;
 
   # https://devenv.sh/scripts/
-  scripts.hello.exec = ''
-  '';
+  scripts.repl.exec = "iex -S mix";
 
   # https://devenv.sh/basics/
   enterShell = ''

@@ -1,33 +1,90 @@
 defmodule Elai.Models.Claude do
   use TypedStruct
+  alias Elai.Models
+
+  @base_url "https://api.anthropic.com/v1"
 
   @supported_models [
     # Claude 4 Models
     "claude-opus-4-1-20250805",
-    "claude-opus-4-1",  # alias
+    # alias
+    "claude-opus-4-1",
     "claude-opus-4-20250514",
-    "claude-opus-4-0",  # alias
+    # alias
+    "claude-opus-4-0",
     "claude-sonnet-4-20250514",
-    "claude-sonnet-4-0",  # alias
+    # alias
+    "claude-sonnet-4-0",
 
     # Claude 3.7 Models
     "claude-3-7-sonnet-20250219",
-    "claude-3-7-sonnet-latest",  # alias
+    # alias
+    "claude-3-7-sonnet-latest",
 
     # Claude 3.5 Models
     "claude-3-5-haiku-20241022",
-    "claude-3-5-haiku-latest",  # alias
-    "claude-3-5-sonnet-latest",  # alias
+    # alias
+    "claude-3-5-haiku-latest",
+    # alias
+    "claude-3-5-sonnet-latest",
 
     # Claude 3 Models
-    "claude-3-opus-latest",  # alias
+    # alias
+    "claude-3-opus-latest",
     "claude-3-haiku-20240307"
   ]
 
   typedstruct enforce: true do
-    plugin TypedStructNimbleOptions
+    plugin(TypedStructNimbleOptions)
 
-    field :model, String.t(), validation_type: {:custom, __MODULE__, :check_model_name, []}, enforce: true, doc: "The Claude model name."
+    field(:api_key, String.t(),
+      default: nil,
+      validation_type: {:custom, __MODULE__, :check_api_key, []},
+      enforce: true,
+      doc: "API key for using Claude API."
+    )
+
+    field(:base_url, String.t(),
+      default: @base_url,
+      enforce: true,
+      doc: "Base url for Claude API calls"
+    )
+
+    field(:model, String.t(),
+      validation_type: {:custom, __MODULE__, :check_model_name, []},
+      enforce: true,
+      doc: "The Claude model name."
+    )
+
+    field(:prompt, Models.Prompt.t(),
+      validation_type: {:nested_struct, Models.Prompt, :new},
+      enforce: true,
+      doc: "The prompt to send to Claude."
+    )
+  end
+
+  def with_prompt!(prompt, opts) when is_map(prompt) do
+    opts
+    |> Keyword.put(:prompt, prompt)
+    |> IO.inspect(label: "with_prompt! opts")
+    |> new!()
+  end
+
+  def check_api_key(key) when is_binary(key) do
+    {:ok, key}
+  end
+
+  def check_api_key(nil) do
+    # Attempt to load the API key from the environment when none is provided explicitly.
+    # This allows callers to omit :api_key and rely on ANTHROPIC_API_KEY being set.
+    case System.get_env("ANTHROPIC_API_KEY") do
+      key when is_binary(key) and byte_size(key) > 0 ->
+        {:ok, key}
+
+      _ ->
+        {:error,
+         "Missing API key. Provide :api_key option or set ANTHROPIC_API_KEY environment variable."}
+    end
   end
 
   def check_model_name(name) do

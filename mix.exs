@@ -23,6 +23,7 @@ defmodule Elai.MixProject do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:jason, "~> 1.4"},
       {:req, "~> 0.5.15"},
       {:typed_struct, "~> 0.3.0"},
       {:typed_struct_nimble_options, "~> 0.1.0"}
