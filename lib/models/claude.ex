@@ -1,6 +1,6 @@
 defmodule Elai.Models.Claude do
   use TypedStruct
-  alias Elai.Models
+  alias Elai.Prompt
 
   @base_url "https://api.anthropic.com/v1"
 
@@ -56,8 +56,8 @@ defmodule Elai.Models.Claude do
       doc: "The Claude model name."
     )
 
-    field(:prompt, Models.Prompt.t(),
-      validation_type: {:nested_struct, Models.Prompt, :new},
+    field(:prompt, Prompt.t(),
+      validation_type: {:nested_struct, Prompt, :new},
       enforce: true,
       doc: "The prompt to send to Claude."
     )

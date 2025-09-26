@@ -21,7 +21,7 @@ defmodule Elai do
   def generate_text(%{prompt: prompt} = model) do
     Logger.debug("Generating text...")
 
-    prompt = Prompt.new!(prompt: prompt.prompt, system: prompt.system)
+    prompt = Prompt.new!(prompt: prompt.prompt, system: prompt.system, tools: prompt.tools)
 
     case model do
       %Models.Claude{} ->

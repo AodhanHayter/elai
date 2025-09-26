@@ -3,6 +3,7 @@
 {
   # https://devenv.sh/basics/
   env.ANTHROPIC_API_KEY = config.secretspec.secrets.ANTHROPIC_API_KEY or "";
+  env.LOG_LEVEL = config.secretspec.secrets.LOG_LEVEL or "info";
 
   # https://devenv.sh/packages/
   packages = [ pkgs.secretspec ];
